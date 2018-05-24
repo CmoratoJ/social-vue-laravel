@@ -2,10 +2,10 @@
   <span>
 
     <header>
-      <nav-bar logo="Social" url="#/" cor ="green darken-1">
+      <nav-bar logo="Social" url="/" cor ="green darken-1">
 
-        <li><a href="#/">Home</a></li>
-        <li><a href="#/login">Entrar</a></li>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/login">Entrar</router-link></li>
 
       </nav-bar>
     </header>
