@@ -2,22 +2,27 @@
   <span>
 
     <header>
-      <nav-bar logo="Social" url="#" cor ="green darken-1" />
+      <nav-bar logo="Social" url="#/" cor ="green darken-1">
+
+        <li><a href="#/">Home</a></li>
+        <li><a href="#/login">Entrar</a></li>
+
+      </nav-bar>
     </header>
 
     <main>
       <div class="container">
         <div class="row">
-          <grid-vue tamanho="6">
+          <grid-vue tamanho="8">
             <card-menu-vue>
-            
-                 
+              <slot name="menuesquerdo" />
             </card-menu-vue>
-
           </grid-vue>
 
-          <grid-vue tamanho="6">
-            <slot />
+          <grid-vue tamanho="4">
+
+            <slot name="principal" />
+
           </grid-vue>
         </div>
       </div>
