@@ -1,6 +1,6 @@
 <template>
 
-<span>
+<site-template>
   <publicar-conteudo-vue />
   <card-conteudo-vue 
     perfil="https://materializecss.com/images/yuna.jpg" 
@@ -17,13 +17,15 @@
 
   </card-conteudo-vue>
 
-</span>
+</site-template>
 </template>
 
 <script>
+import SiteTemplate from '@/templates/SiteTemplate'
 import CardConteudoVue from '@/components/social/CardConteudoVue'
 import CardDetalheVue from '@/components/social/CardDetalheVue'
 import PublicarConteudoVue from '@/components/social/PublicarConteudoVue'
+
 
 
 export default {
@@ -31,7 +33,8 @@ export default {
   components:{
     CardConteudoVue,
     CardDetalheVue,
-    PublicarConteudoVue
+    PublicarConteudoVue,
+    SiteTemplate
   },
   data () {
     return {
