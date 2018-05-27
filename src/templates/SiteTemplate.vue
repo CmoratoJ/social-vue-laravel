@@ -23,7 +23,9 @@
             </card-menu-vue>
 
             <card-menu-vue>
-              <h3>Teste</h3>
+              <h3>Amigos</h3>
+              <li>Murilo</li>
+              <li>Gustavo</li>
             </card-menu-vue>
           </grid-vue>
 
