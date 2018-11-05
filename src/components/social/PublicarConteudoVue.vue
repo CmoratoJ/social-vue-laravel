@@ -2,13 +2,16 @@
 
     <div class="row">
         <grid-vue class="input-field" tamanho="12">
-            <textarea v-model="conteudo" class="materialize-textarea"></textarea>
+            <input type="text" v-model="conteudo.titulo">
+            <textarea v-if="conteudo.titulo" placeholder="Conteudo" v-model="conteudo.texto" class="materialize-textarea"></textarea>
+            <input v-if="conteudo.titulo && conteudo.texto" type="text" placeholder="Link" v-model="conteudo.link">
+            <input v-if="conteudo.titulo && conteudo.texto" type="text" placeholder="Url da imagem" v-model="conteudo.imagem">
             <label>O que está acontecendo?</label>
         </grid-vue>
-        <p>
-            <grid-vue v-if="conteudo" class="btn waves-effect waves-light" tamanho="2 offset-s10">Publicar</grid-vue>
+        <p class="right-align">
+            <button @click="addConteudo()" v-if="conteudo.titulo && conteudo.texto" class="btn waves-effect waves-light">Publicar</button>
         </p>
-  </div>
+    </div>
     
 </template>
 
@@ -18,13 +21,42 @@ import GridVue from '@/components/layouts/GridVue'
 export default {
   name: 'PublicarConteudoVue',
   props:[],
+  data () {
+    return {
+        conteudo:{titulo:'',texto:'',link:'',imagem:''}
+    }
+  },
   components:{
     GridVue
   },
-  data () {
-    return {
-        conteudo:''
-    }
+  methods:{
+      addConteudo(){
+          console.log(this.conteudo);
+          this.$http.post(this.$urlAPI+'conteudo/adicionar',{
+              titulo: this.conteudo.titulo,
+              texto: this.conteudo.texto,
+              link: this.conteudo.link,
+              imagem: this.conteudo.imagem
+          },
+          {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}}).then(response => {
+        if(response.data.status){
+          console.log(response.data.conteudos);
+
+            this.conteudo = {titulo:'',texto:'',link:'',imagem:''};
+            this.$store.commit('setConteudosLinhaTempo', response.data.conteudos.data);
+              }else if(response.data.status == false && response.data.validacao){
+                  //erro de validação
+                let erros = '';
+                for(let erro of Object.values(response.data.erros)){
+                    erros += erro +" ";
+                }
+                alert(erros);
+            }
+          }).catch(e=>{
+              console.log(e);
+              alert("Erro! tente mais tarde!");
+          });
+      }
   }
 }
 </script>

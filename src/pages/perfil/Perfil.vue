@@ -11,7 +11,7 @@
       <span slot="principal">
 
          <h2>Perfil</h2>
-            <input type="text" placeholder="Nome" v-model="name">
+            <input  type="text" placeholder="Nome" v-model="name">
             <input type="text" placeholder="E-mail" v-model="email">
 
         <div class="file-field input-field">
@@ -38,7 +38,7 @@
 
 <script>
 import SiteTemplate from '@/templates/SiteTemplate'
-import axios from 'axios';
+
 
 
 export default {
@@ -58,9 +58,9 @@ export default {
   },
   created(){
     
-    let usuarioAux = sessionStorage.getItem('usuario');
+    let usuarioAux = this.$store.getters.getUsuario;
     if(usuarioAux){
-      this.usuario = JSON.parse(usuarioAux);
+      this.usuario = this.$store.getters.getUsuario;
       this.name = this.usuario.name;
       this.email = this.usuario.email;
     }
@@ -81,37 +81,38 @@ export default {
   },
   perfil(){
 
-    axios.put(`http://127.0.0.1:8000/api/perfil`,{
-      name: this.name,
-      email: this.email,
-      imagem: this.imagem,
-      password: this.password,
-      password_confirmation: this.password_confirmation
-    },{"headers":{"authorization":"Bearer "+this.usuario.token}})
-    .then(response => {
-      //console.log(response)
-      if(response.data.token){
-        //login  com sucesso
-        console.log(response.data);
-        this.usuario = response.data;
-        sessionStorage.setItem('usuario',JSON.stringify(this.usuario));
-        alert('Perfil atualizado!');
-        
-      }else{
-        //erros de validação
-        console.log('erros de validação')
-        let erros = '';
-        for(let erro of Object.values(response.data)){
-          erros += erro +" ";
+      this.$http.put(this.$urlAPI+`perfil`, {
+        name: this.name,
+        email: this.email,
+        imagem: this.imagem,
+        password:this.password,
+        password_confirmation:this.password_confirmation
+      },{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+      .then(response => {
+        //console.log(response)
+        if(response.data.status){
+          // login com sucesso
+          //console.log(response.data);
+          this.usuario = response.data.usuario;
+          this.$store.commit('setUsuario',response.data.usuario);
+          sessionStorage.setItem('usuario',JSON.stringify(this.usuario));
+          alert('Perfil atualizado!');
+
+        }else if(response.data.status == false && response.data.validacao){
+          // erros de validação
+          //console.log('erros de validação')
+          let erros = '';
+          for(let erro of Object.values(response.data.erros)){
+            erros += erro +" ";
+          }
+          alert(erros);
         }
-        alert(erros);
-       }
-    })
-    .catch(e => {
-    console.log(e)
-    alert("Erro! Tente novamente mais tarde!")
-    })
-  }
+      })
+      .catch(e => {
+        console.log(e)
+        alert("Erro! Tente novamente mais tarde!");
+      })
+    }
   }
 }
 </script>

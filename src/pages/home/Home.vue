@@ -20,18 +20,17 @@
     <publicar-conteudo-vue />
 
   
-    <card-conteudo-vue 
-      perfil="https://materializecss.com/images/yuna.jpg" 
-      nome="Maria Silva" 
-      data="13/01/18 13:30">    
+    <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
+      :perfil="item.user.imagem" 
+      :nome="item.user.name" 
+      :data="item.data">    
 
         <card-detalhe-vue 
-          img="https://materializecss.com/images/sample-1.jpg" 
-          titulo="" 
-          txt="I am a very simple card. I am good at containing small bits of information.
-          I am convenient because I require little markup to use effectively.">
+          :img="item.imagem" 
+          :titulo="item.titulo" 
+          :txt="item.texto"
+          :link="item.link" />
 
-        </card-detalhe-vue>
 
     </card-conteudo-vue>
 
@@ -53,14 +52,27 @@ export default {
   name: 'Home',
   data () {
     return {
-      usuario:false
+      usuario:false,
     }
   },
   created(){
     
-    let usuarioAux = sessionStorage.getItem('usuario');
+    let usuarioAux = this.$store.getters.getUsuario;
     if(usuarioAux){
-      this.usuario = JSON.parse(usuarioAux);
+      this.usuario = this.$store.getters.getUsuario;
+      this.$http.get(this.$urlAPI+`conteudo/lista`, {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+      .then(response => {
+        console.log(response);
+        if (response.data.status) {
+          this.$store.commit('setConteudosLinhaTempo', response.data.conteudos.data);
+        }
+
+      })
+      .catch(e => {
+        console.log(e)
+        alert("Erro! Tente novamente mais tarde!");
+      })
+
     }
   },
   components:{
@@ -69,6 +81,11 @@ export default {
     PublicarConteudoVue,
     SiteTemplate,
     GridVue
+  },
+  computed:{
+    listaConteudos(){
+      return this.$store.getters.getConteudosLinhaTempo;
+    }
   }
 }
 </script>

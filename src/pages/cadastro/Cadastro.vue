@@ -27,7 +27,6 @@
 
 <script>
 import LoginTemplate from '@/templates/LoginTemplate'
-import axios from 'axios';
 
 
 export default {
@@ -38,7 +37,7 @@ export default {
   methods:{
   cadastro(){
     console.log("ok");
-    axios.post(`http://127.0.0.1:8000/api/cadastro`,{
+    this.$http.post(this.$urlAPI+`cadastro`,{
       name: this.name,
       email: this.email,
       password: this.password,
@@ -46,22 +45,24 @@ export default {
     })
     .then(response => {
       //console.log(response)
-      if(response.data.token){
+      if(response.data.status){
         //login  com sucesso
         console.log('cadastro realizado com sucesso')
-        sessionStorage.setItem('usuario',JSON.stringify(response.data));
+        this.$store.commit('setUsuario', response.data.usuario);
+        sessionStorage.setItem('usuario',JSON.stringify(response.data.usuario));
         this.$router.push('/');
-      }else if(response.data.status == false){
-        //login não existe
-        alert('Erro no cadastro! Tente novamente mais tarde.');
-      }else{
+      }else if(response.data.status == false && response.data.validacao){
         //erros de validação
         console.log('erros de validação')
         let erros = '';
-        for(let erro of Object.values(response.data)){
+        for(let erro of Object.values(response.data.erros)){
           erros += erro +" ";
         }
         alert(erros);
+        
+      }else{
+        //login não existe
+        alert('Erro no cadastro! Tente novamente mais tarde.');
        }
     })
     .catch(e => {
